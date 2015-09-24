@@ -1,5 +1,6 @@
 webpack = require 'webpack'
 StaticSiteGeneratorPlugin = require 'static-site-generator-webpack-plugin'
+cssnext = require 'cssnext'
 
 gatsbyLib = /(gatsby.lib)/i
 libDirs = /(node_modules|bower_components)/i
@@ -100,7 +101,7 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
     switch stage
       when "serve"
         loaders: [
-          { test: /\.css$/, loaders: ['style', 'css']},
+          { test: /\.css$/, loaders: ['style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader']},
           { test: /\.cjsx$/, loaders: ['react-hot', 'coffee', 'cjsx']},
           {
             test: /\.jsx?$/,
@@ -130,7 +131,7 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
         ]
       when "static"
         loaders: [
-          { test: /\.css$/, loaders: ['css']},
+          { test: /\.css$/, loaders: ['css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader']},
           { test: /\.cjsx$/, loaders: ['coffee', 'cjsx']},
           {
             test: /\.jsx?$/,
@@ -160,7 +161,7 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
         ]
       when "production"
         loaders: [
-          { test: /\.css$/, loaders: ['style', 'css']},
+          { test: /\.css$/, loaders: ['style!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader']},
           { test: /\.cjsx$/, loaders: ['coffee', 'cjsx']},
           {
             test: /\.jsx?$/,
@@ -199,6 +200,18 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
     resolveLoader: {
       modulesDirectories: ["#{directory}/node_modules", "#{__dirname}/../../node_modules", "#{__dirname}/../loaders"]
     },
+    postcss: [
+      cssnext({
+        browsers: 'last 2 versions',
+        import: true,
+        compress: false,
+        messages: true,
+        plugins: [
+          require('postcss-nested'),
+          require('lost')
+        ]
+      })  
+    ],
     plugins: plugins()
     resolve: resolve()
     module: module()

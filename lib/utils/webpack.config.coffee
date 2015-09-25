@@ -101,7 +101,7 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
     switch stage
       when "serve"
         loaders: [
-          { test: /\.css$/, loaders: ['style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader']},
+          { test: /\.css$/, loader: 'style-loader!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader'},
           { test: /\.cjsx$/, loaders: ['react-hot', 'coffee', 'cjsx']},
           {
             test: /\.jsx?$/,

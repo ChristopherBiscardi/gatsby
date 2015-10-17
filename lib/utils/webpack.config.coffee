@@ -1,6 +1,7 @@
 webpack = require 'webpack'
 StaticSiteGeneratorPlugin = require 'static-site-generator-webpack-plugin'
 cssnext = require 'cssnext'
+ExtractTextPlugin = require 'extract-text-webpack-plugin';
 
 gatsbyLib = /(gatsby.lib)/i
 libDirs = /(node_modules|bower_components)/i
@@ -69,6 +70,9 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
               NODE_ENV: JSON.stringify("production")
             }
             __GH_PAGES__: JSON.stringify(JSON.parse(process.env.GATSBY_ENV is "gh-pages"))
+          })
+          new ExtractTextPlugin('style.css', {
+            allChunks: true
           })
           new webpack.optimize.DedupePlugin()
           new webpack.optimize.UglifyJsPlugin()
@@ -161,7 +165,7 @@ module.exports = (program, directory, stage, webpackPort = 1500, routes=[]) ->
         ]
       when "production"
         loaders: [
-          { test: /\.css$/, loaders: ['style!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader']},
+          { test: /\.css$/, loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader')},
           { test: /\.cjsx$/, loaders: ['coffee', 'cjsx']},
           {
             test: /\.jsx?$/,

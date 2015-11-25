@@ -9,11 +9,11 @@ var first = require('lodash/array/first');
 
 function loadConfig(cb) {
   var stuff = require('config');
-  if (module.hot) {
-    module.hot.accept(stuff.id, function() {
-      return cb();
-    });
-  }
+  // if (module.hot) {
+  //   module.hot.accept(stuff.id, function() {
+  //     return cb();
+  //   });
+  // }
   return cb();
 };
 
